@@ -41,6 +41,7 @@ public class ImageButton extends JButton {
     public void setDrawImage(boolean b)
     {
     	drawImage = b;
+    	repaint();
     }
 
 	@Override
