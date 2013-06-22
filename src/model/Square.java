@@ -31,6 +31,9 @@ public class Square extends Observable{
 	
 	public boolean reveal()
 	{
+		if (this.isFlagged)
+			return false;
+		
 		if (!this.isRevealed)
 		{
 			this.isRevealed = true;
