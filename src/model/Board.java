@@ -70,9 +70,9 @@ public class Board extends Observable{
 		this(width, height, 10, 0);
 	}
 	
-	public void floodFill(int x, int y)
+	public void floodFill(int xPos, int yPos)
 	{
-		Square square = squares[x][y];
+		Square square = squares[xPos][yPos];
 
 		Queue<Square> q = new LinkedList<>();
 		
@@ -91,14 +91,10 @@ public class Board extends Observable{
 
 			if (square.neighboringMines == 0)
 			{
-				if (withinBounds(square.x + 1, square.y, width, height))
-					q.add(squares[square.x + 1][square.y]);
-				if (withinBounds(square.x - 1, square.y, width, height))
-					q.add(squares[square.x - 1][square.y]);
-				if (withinBounds(square.x, square.y + 1, width, height))
-					q.add(squares[square.x][square.y + 1]);
-				if (withinBounds(square.x, square.y - 1, width, height))
-					q.add(squares[square.x][square.y - 1]);
+				for (int y = square.y - 1; y <= square.y + 1; ++y)
+					for (int x = square.x - 1; x <= square.x + 1; ++x)
+						if (withinBounds(x, y, width, height))
+							q.add(squares[x][y]);
 			}
 		}
 	}
@@ -127,10 +123,13 @@ public class Board extends Observable{
 		notifyObservers(square);
 		
 		//FIXME hack so the floodFill works for the tile it starts on
-		square.isRevealed = false;
 
 		if (square.neighboringMines == 0)
+		{
+			unrevealed++;
+			square.isRevealed = false;
 			floodFill(x, y);
+		}
 		
 	}
 	
@@ -165,6 +164,11 @@ public class Board extends Observable{
 	public boolean gameOver()
 	{
 		return lost() || won();
+	}
+	
+	public int unrevealed()
+	{
+		return unrevealed;
 	}
 	
 	@Override

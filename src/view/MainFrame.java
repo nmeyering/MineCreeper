@@ -2,21 +2,27 @@ package view;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SpringLayout;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame implements Observer {
 
 	private model.Board board;
 	private Map<model.Square, ImageButton> buttonMap;
+	private JTextField scoreText;
 
 	public MainFrame(model.Board board) {
 		this.board = board;
@@ -36,10 +42,19 @@ public class MainFrame extends JFrame implements Observer {
 		
 		buttonMap = new HashMap<model.Square, ImageButton>();
 		
+		this.setLayout(new FlowLayout());
+		
+		scoreText = new JTextField("squares left:" + cols * rows);
+		scoreText.setVisible(true);
+		
+		add(scoreText);
+
 		JPanel boardPanel = new JPanel(
 				new GridLayout(
 						rows,
 						cols));
+		
+		boardPanel.setPreferredSize(new Dimension(cols * 64, rows * 64));
 
 		for (int y = 0; y < rows; ++y)
 			for (int x = 0; x < cols; ++x)
@@ -57,6 +72,8 @@ public class MainFrame extends JFrame implements Observer {
 			}
 		
 		add(boardPanel);
+		this.pack();
+		this.setVisible(true);
 	}
 
 	@Override
@@ -67,6 +84,7 @@ public class MainFrame extends JFrame implements Observer {
 		if (!(arg instanceof model.Square))
 			return;
 
+		scoreText.setText("squares left: " + (board.unrevealed() - board.mines));
 
 		model.Square square = (model.Square) arg;
 		ImageButton button = buttonMap.get(square);
